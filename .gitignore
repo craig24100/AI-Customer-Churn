@@ -1,0 +1,20 @@
+# Python
+backend/.venv/
+backend/__pycache__/
+*.pyc
+
+# ML models (optional)
+# backend/model.pkl
+# backend/gender_encoder.pkl
+# backend/geo_encoder.pkl
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
