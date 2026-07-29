@@ -46,7 +46,7 @@ export default function App() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/predict",
+        "https://ai-customer-churn.onrender.com/predict",
         {
           CreditScore: Number(form.CreditScore),
           Geography: form.Geography,

@@ -12,7 +12,7 @@ export default function ChurnChart() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/stats")
+    fetch("https://ai-customer-churn.onrender.com/stats")
       .then((response) => response.json())
       .then((result) => {
         setData([
