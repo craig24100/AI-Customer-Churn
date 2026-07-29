@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import ChurnChart from "./components/ChurnChart";
 import axios from "axios";
 import "./App.css";
+import ChurnChart from "./components/ChurnChart";
 import AccuracyCard from "./components/AccuracyCard";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function App() {
   const [form, setForm] = useState({
@@ -24,12 +26,15 @@ export default function App() {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
-  fetch("http://127.0.0.1:8000/stats")
-    .then((res) => res.json())
-    .then((data) => {
-      setStats(data);
-    });
-}, []);
+    fetch(`${API_URL}/stats`)
+      .then((res) => res.json())
+      .then((data) => {
+        setStats(data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,21 +50,18 @@ export default function App() {
     setError("");
 
     try {
-      const response = await axios.post(
-        "https://ai-customer-churn.onrender.com/predict",
-        {
-          CreditScore: Number(form.CreditScore),
-          Geography: form.Geography,
-          Gender: form.Gender,
-          Age: Number(form.Age),
-          Tenure: Number(form.Tenure),
-          Balance: Number(form.Balance),
-          NumOfProducts: Number(form.NumOfProducts),
-          HasCrCard: Number(form.HasCrCard),
-          IsActiveMember: Number(form.IsActiveMember),
-          EstimatedSalary: Number(form.EstimatedSalary),
-        }
-      );
+      const response = await axios.post(`${API_URL}/predict`, {
+        CreditScore: Number(form.CreditScore),
+        Geography: form.Geography,
+        Gender: form.Gender,
+        Age: Number(form.Age),
+        Tenure: Number(form.Tenure),
+        Balance: Number(form.Balance),
+        NumOfProducts: Number(form.NumOfProducts),
+        HasCrCard: Number(form.HasCrCard),
+        IsActiveMember: Number(form.IsActiveMember),
+        EstimatedSalary: Number(form.EstimatedSalary),
+      });
 
       setResult(response.data);
     } catch (err) {
@@ -73,10 +75,11 @@ export default function App() {
   return (
     <div className="container">
       <h1>🤖 AI Customer Churn Prediction</h1>
-        
-{stats && (
-  <AccuracyCard accuracy={stats.accuracy} />
-)}
+
+      {stats && (
+        <AccuracyCard accuracy={stats.accuracy} />
+      )}
+
       <div className="form-grid">
 
         <div className="field">
@@ -202,11 +205,7 @@ export default function App() {
 
       {result && (
         <div className="result">
-          <h2
-            className={
-              result.prediction === 1 ? "high" : "low"
-            }
-          >
+          <h2 className={result.prediction === 1 ? "high" : "low"}>
             {result.prediction === 1
               ? "🔴 High Churn Risk"
               : "🟢 Low Churn Risk"}
@@ -222,9 +221,9 @@ export default function App() {
               : "This customer is likely to stay."}
           </p>
         </div>
-        
       )}
-    <ChurnChart />
+
+      <ChurnChart />
     </div>
   );
 }
